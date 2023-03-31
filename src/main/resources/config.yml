@@ -1,0 +1,13 @@
+afk-time: 60
+min-money: 1
+max-money: 1000
+Items:
+  '1':
+    material: 'stone'
+    chance: 0.3
+    name: 'name'
+    amount: 1
+    durability: -1
+    id: 1
+    lore:
+      - '&7this is a stone'

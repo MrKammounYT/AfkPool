@@ -1,0 +1,6 @@
+name: AFKPool
+version: '${project.version}'
+main: tn.afkpool.AFKPool
+api-version: 1.19
+commands:
+  afkpool:
