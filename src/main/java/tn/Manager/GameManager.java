@@ -30,6 +30,8 @@ public class GameManager {
     private Location regionMin;
     private Location regionMax;
 
+    private int MoneyPercentage;
+
     private Location loc2;
     private String worldName;
 
@@ -46,6 +48,7 @@ public class GameManager {
         this.itemsManager = new ItemsManager();
         this.fileManager = new FileManager(itemsManager,main.getConfig());
         this.time = main.getConfig().getInt("afk-time");
+        this.MoneyPercentage = main.getConfig().getInt("Money-Percentage");
         this.maxMoney = main.getConfig().getInt("max-money");
         this.minMoney = main.getConfig().getInt("min-money");
         this.locationAPI = new LocationAPI(main);
@@ -60,12 +63,20 @@ public class GameManager {
             main.getLogger().info("Please Setup your pos1 and pos2 in game");
         }
     }
+
+    public int getMoneyPercentage() {
+        return MoneyPercentage;
+    }
+
     public void createPlayer(Player p){
         players.put(p,time);
     }
 
     public void addRandomMoney(Player p){
-        main.getEconomy().bankDeposit(p.getName(),rd.nextInt(minMoney,maxMoney));
+        int x = rd.nextInt(minMoney,maxMoney);
+        main.getEconomy().bankDeposit(p.getName(),x);
+        p.sendMessage("§7[§aAFK Pool§7] §aYou got Lucky and won §e"+x+"§a$");
+
     }
 
     public HashMap<Player, Integer> getPlayers() {

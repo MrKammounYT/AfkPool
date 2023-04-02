@@ -69,7 +69,7 @@ public class afkpool implements CommandExecutor {
                         lore = new ArrayList<>();
                     }
                     lore.add("§c   ");
-                    lore.add("§6§lChance: §e"+Double.valueOf(manager.getItemsManager().getItemStack().get(i).getChance()*100).intValue()+"%");
+                    lore.add("§6§lChance: §e"+Double.valueOf(manager.getItemsManager().getItemStack().get(i).getChance()*100)+"%");
                     meta.setLore(lore);
 
 
