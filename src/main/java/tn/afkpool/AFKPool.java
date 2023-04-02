@@ -22,7 +22,7 @@ public final class AFKPool extends JavaPlugin {
 
     private GameManager manager;
 
-    private final String version = "0.2";
+    private final String version = "0.2.1";
     private static Economy econ = null;
 
 
