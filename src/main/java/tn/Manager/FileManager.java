@@ -35,13 +35,13 @@ public class FileManager {
             String path = "Items."+i+".";
             Material material = Material.getMaterial(config.getString(path+"material").toUpperCase());
             if(material == null){
-                Bukkit.getConsoleSender().sendMessage("[AFK POOL] invalid material "+ config.getString(path+"material"));
+                Bukkit.getConsoleSender().sendMessage("[AFK POOL] invaldata material "+ config.getString(path+"material"));
                 return;
             }
-            int id = config.getInt(path +".id");
+            int data = config.getInt(path +".data");
             int amount = config.getInt(path +".amount");
             int durability = config.getInt(path +".durability");
-            ItemStack item = new ItemStack(material,amount,(short)id);
+            ItemStack item = new ItemStack(material,amount,(short)data);
             ItemMeta meta = item.getItemMeta();
             if(durability != -1){
                 item.setDurability((short)durability);
@@ -56,7 +56,6 @@ public class FileManager {
             meta.setLore(newlore);
             item.setItemMeta(meta);
             double chance = config.getDouble(path+"chance");
-            Bukkit.getConsoleSender().sendMessage("chance: "+chance);
             itemsManager.itemStack.add(new ItemClass(item,chance));
 
         }
@@ -79,7 +78,7 @@ public class FileManager {
             config.set("Items."+lastint+".lore",item.getItemMeta().getLore().toArray());
         }
         config.set("Items."+lastint+".amount",item.getAmount());
-        config.set("Items."+lastint+".id",item.getData());
+        config.set("Items."+lastint+".data",item.getData().getData());
         config.set("Items."+lastint+".durability",item.getDurability());
         config.set("Items."+lastint+".chance",chance);
         AFKPool.getInstance().saveConfig();

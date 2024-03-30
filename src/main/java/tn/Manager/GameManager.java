@@ -1,6 +1,7 @@
 package tn.Manager;
 
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import tn.Run.GameRun;
@@ -16,7 +17,8 @@ public class GameManager {
 
     private final  int time;
 
-    HashMap<Player,Integer> players = new HashMap<Player,Integer>();
+
+    HashMap<Player,Integer> AFKPlayers = new HashMap<Player,Integer>();
 
     private final FileManager fileManager;
 
@@ -24,26 +26,26 @@ public class GameManager {
 
     private final LocationAPI locationAPI;
 
+    
     private final int maxMoney;
 
     private final int minMoney;
-    private Location regionMin;
-    private Location regionMax;
+    
+    private World AFKPool_World;
+    private Location AFKPool_Min;
+    private Location AFKPool_Max;
 
-    private int MoneyPercentage;
+    private final int MoneyPercentage;
 
-    private Location loc2;
-    private String worldName;
-
-    protected Random rd;
+    protected Random rd = new Random();;
 
     private final AFKPool main;
+    private GameRun gameRun;
 
 
 
 
     public GameManager(AFKPool main){
-        this.rd = new Random();
         this.main = main;
         this.itemsManager = new ItemsManager();
         this.fileManager = new FileManager(itemsManager,main.getConfig());
@@ -55,32 +57,37 @@ public class GameManager {
         if(locationAPI.LocationExists("pos1") && locationAPI.LocationExists("pos2")){
             Location loc1 = locationAPI.getLocation("pos1");
             Location loc2 = locationAPI.getLocation("pos2");
-            worldName = Objects.requireNonNull(loc1.getWorld()).getName();
-            regionMin = new Location(loc1.getWorld(), Math.min(loc1.getX(), loc2.getX()), Math.min(loc1.getY(), loc2.getY()), Math.min(loc1.getZ(), loc2.getZ()));
-            regionMax = new Location(loc1.getWorld(), Math.max(loc1.getX(), loc2.getX()), Math.max(loc1.getY(), loc2.getY()), Math.max(loc1.getZ(), loc2.getZ()));
-            new GameRun(this).runTaskTimer(AFKPool.getInstance(),0,20);
+            AFKPool_World = loc1.getWorld();
+            AFKPool_Min = new Location(loc1.getWorld(), Math.min(loc1.getX(), loc2.getX()), Math.min(loc1.getY(), loc2.getY()), Math.min(loc1.getZ(), loc2.getZ()));
+            AFKPool_Max = new Location(loc1.getWorld(), Math.max(loc1.getX(), loc2.getX()), Math.max(loc1.getY(), loc2.getY()), Math.max(loc1.getZ(), loc2.getZ()));
+            gameRun = new GameRun(this);
+            gameRun.runTaskTimer(AFKPool.getInstance(),0,20);
         }else{
             main.getLogger().info("Please Setup your pos1 and pos2 in game");
         }
     }
 
+    public void stopGameRun(){
+        if(gameRun == null)return;
+        gameRun.cancel();
+    }
     public int getMoneyPercentage() {
         return MoneyPercentage;
     }
 
     public void createPlayer(Player p){
-        players.put(p,time);
+        AFKPlayers.put(p,time);
     }
 
     public void addRandomMoney(Player p){
         int x = rd.nextInt(minMoney,maxMoney);
         main.getEconomy().bankDeposit(p.getName(),x);
-        p.sendMessage("§7[§aAFK Pool§7] §aYou got Lucky and won §e"+x+"§a$");
+        p.sendMessage(AFKPool.Prefix + AFKPool.color("&aYou got Lucky and won &e"+x+"&a$"));
 
     }
 
     public HashMap<Player, Integer> getPlayers() {
-        return players;
+        return AFKPlayers;
     }
 
     public int getTime() {
@@ -90,16 +97,16 @@ public class GameManager {
         return itemsManager;
     }
 
+    public World getAFKPool_World() {
+        return AFKPool_World;
+    }
+
     public boolean isInRegion(Player p){
-
         Location playerLoc = p.getLocation();
+        return (playerLoc.getX() >=AFKPool_Min.getX() && playerLoc.getX() <= AFKPool_Max.getX())
+                && (playerLoc.getY() >= AFKPool_Min.getY() && playerLoc.getY() <= AFKPool_Max.getY())
+                &&( playerLoc.getZ() >= AFKPool_Min.getZ() && playerLoc.getZ() <= AFKPool_Max.getZ());
 
-        if (playerLoc.getX() >=regionMin.getX() && playerLoc.getX() <= regionMax.getX()
-                && playerLoc.getY() >= regionMin.getY() && playerLoc.getY() <= regionMax.getY()
-                && playerLoc.getZ() >= regionMin.getZ() && playerLoc.getZ() <= regionMax.getZ()) return true;
-
-        return regionMin.getY() < playerLoc.getY() && playerLoc.getY() > regionMax.getY() && playerLoc.getZ() > regionMin.getZ() && playerLoc.getZ() < regionMax.getZ()
-                && playerLoc.getX() > regionMin.getX() && playerLoc.getX() < regionMax.getX();
 
     }
 

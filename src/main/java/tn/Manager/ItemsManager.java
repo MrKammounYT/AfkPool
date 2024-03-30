@@ -10,9 +10,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class ItemsManager {
 
     ArrayList<ItemClass> itemStack = new ArrayList<>();
-    public ItemsManager(){
 
-    }
 
     public ArrayList<ItemClass> getItemStack() {
         return itemStack;

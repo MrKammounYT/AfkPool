@@ -58,7 +58,7 @@ public class afkpool implements CommandExecutor {
         }else if(args.length == 1){
            if(args[0].equalsIgnoreCase("items")){
                 int bs = manager.getItemsManager().getItemStack().size()/9;
-                Inventory inv = Bukkit.createInventory(null,(bs+1)*9,"§aAFK POOL Items");
+                Inventory inv = Bukkit.createInventory(null,(bs+1)*9,"§eAFK POOL §7Items");
                 for(int i=0;i<manager.getItemsManager().getItemStack().size();i++){
                     ItemStack f =manager.getItemsManager().getItemStack().get(i).getItem();
                     ItemMeta meta = f.getItemMeta();
@@ -79,12 +79,16 @@ public class afkpool implements CommandExecutor {
                 }
                 player.openInventory(inv);
             }
+           else if(args[0].equalsIgnoreCase("reload")){
+               AFKPool.getInstance().reloadPlugin();
+               player.sendMessage(AFKPool.Prefix + AFKPool.color("&aThe Plugin Has been reloaded!"));
+           }
         }
         else{
             player.sendMessage("§9§m--------------------------------------------------");
             player.sendMessage("                    §eAfk Pool§7(§e"+ AFKPool.getInstance().getVersion()+"§7)");
             player.sendMessage("§e/afkpool set [pos1/pos2] §7(this will set the position for the afkpool)");
-            player.sendMessage("§e/afkpool additem [chance] §7(this will add the item you curently holding)");
+            player.sendMessage("§e/afkpool additem [chance (10/20/80..)] §7(this will add the item you curently holding)");
             player.sendMessage("§e/afkpool items §7(open the afkpool items inventory)");
             player.sendMessage("§9§m---------------------------------------------------");
         }

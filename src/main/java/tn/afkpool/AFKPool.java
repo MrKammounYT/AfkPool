@@ -1,6 +1,7 @@
 package tn.afkpool;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -22,7 +23,9 @@ public final class AFKPool extends JavaPlugin {
 
     private GameManager manager;
 
-    private final String version = "0.2.1";
+    private final String version = "0.2.2";
+
+    public static String Prefix = "&7[&aAFK Pool&7] ";
     private static Economy econ = null;
 
 
@@ -36,6 +39,7 @@ public final class AFKPool extends JavaPlugin {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
+        Prefix = color(getConfig().getString("Prefix"));
         manager = new GameManager(this);
         getLogger().info("AFKPool v"+version+" has been enabled");
         getLogger().info("coded by SrKammounYT");
@@ -48,28 +52,21 @@ public final class AFKPool extends JavaPlugin {
         return version;
     }
 
-    public void registerAfkPoolMembers(){
-        File tempFile = new File("afkpool-node",getConfig().getCurrentPath());
-        if (!tempFile.exists()) {
-            tempFile.getParentFile().mkdir();
-            try {
-                tempFile.createNewFile();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        YamlConfiguration config = YamlConfiguration.loadConfiguration(tempFile);
-        ArrayList<UUID> PoolMembers = new ArrayList<UUID>();
-        for(Player pls: Bukkit.getOnlinePlayers()){
-            if(manager.isInRegion(pls)){
-                PoolMembers.add(pls.getUniqueId());
-            }
-        }
-        config.set("PoolMember",PoolMembers);
+    public static String color(String s){
+        return ChatColor.translateAlternateColorCodes('&',s);
     }
 
     @Override
     public void onDisable() {
+
+
+    }
+
+    public void reloadPlugin(){
+        manager.stopGameRun();
+        Prefix = color(getConfig().getString("Prefix"));
+        manager = new GameManager(this);
+
     }
     public static AFKPool getInstance() {
         return instance;
